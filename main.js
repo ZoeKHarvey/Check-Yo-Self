@@ -1,5 +1,5 @@
 var globalArray = []
-var titleInput = document.querySelector(".section__p--task-title");
+var titleInput = document.querySelector(".section__input--title");
 var taskInput = document.querySelector(".section__input--task");
 var addTaskButton = document.querySelector(".section__button--plus");
 var saveButton =document.querySelector(".section__button--make-task");
@@ -18,17 +18,20 @@ addTaskButton.addEventListener("click", insertTask);
 
 
 saveButton.addEventListener("click", mainEvent)
+mainContainer.addEventListener("mouseover", eventHandlerHover);
+mainContainer.addEventListener("mouseout", eventHandlerHoverClear)
 
 function mainEvent() {
-  appendToDo();
+  createToDoList();
 }
 
-// function initializePage() {
-//   var tempArray = getExistingTasks();
-//     if(tempArray.length >0) {
-//       loadTasks(tempArray)
-//     }
-//   }
+function initializePage() {
+  var tempArray = getExistingTasks();
+    if(tempArray.length >0) {
+      loadTasks(tempArray);
+      removePrompt();
+    }
+  }
  
  function getExistingTasks() {
   return JSON.parse(localStorage.getItem("toDoArray"))
@@ -48,6 +51,83 @@ function mainEvent() {
   taskInput.value = "";
  }
 
+ function createToDoList() {
+  console.log("create to do list firing")
+  var newToDo = new ToDoList({
+    id: Date.now(),
+    title: titleInput.value,
+    tasks: [],
+    urgent: false,
+  })
+  appendToDo(newToDo);
+  globalArray.push(newToDo);
+  newToDo.saveToStorage(globalArray);
+}
+
+
+function appendToDo(newToDo) {
+  console.log(newToDo)
+  mainContainer.insertAdjacentHTML("afterbegin", `<article class="article__card" data-id=${newToDo.id}> 
+    <div class="article__card--task"
+    <img class="article__img--check" src=${checkmarkImgSource}>
+        <h2 class="article__card--title">${newToDo.title}</h2>
+    </div>
+        <footer>
+            <div class="article__card--urgent-both">
+            <img class="article__img--urgent" src=${urgentImgSource}>
+            <p class="article__card--urgent">Urgent</p>
+          </div>
+          <div class="article__card--delete-both">
+            <img class="article__img--delete" src="icons/delete.svg">
+            <p>Delete</p> 
+          </div>
+        </footer>
+        </article>`);
+}
+
+function urgentImgSource(newToDo) {
+  var imgSource = "icons/urgent.svg";
+  if (toDo.urgent === true) {
+    imgSource = "icons/urgent-active.svg"
+  }
+  return imgSource
+}
+
+function checkmarkImgSource(e) {
+  if (e.target.classList.contains("article__img--check")) {
+    e.target.src = "icons/checkbox-active.svg"
+  }
+}
+
+function eventHandlerHover(e) {
+  if (e.target.classList.contains("article__img--delete")){
+    e.target.src = "icons/delete-active.svg"
+  }
+}
+
+function eventHandlerHoverClear(e) {
+  if(e.target.classList.contains("article__img--delete")){
+    e.target.src="icons/delete.svg"
+  }
+}
+
+function getToDoId(e) {
+  console.log("get id firing")
+  return event.target.closest(".article__card").dataset("data-id")
+}
+
+function getIndex(e) {
+  console.log("get index firing")
+  var id = event.target.closest(".article__card").dataset.id;
+  var getIndex = globalArray.findIndexobj (function(){
+    return parseInt(id) === obj.id
+  })
+  return getIndex
+  }
+
+// function removeTask(e) {
+//   if(e.target.className ===)
+// }
 
 
 
@@ -70,25 +150,7 @@ function mainEvent() {
 //   toDos = createNewToDos;
 // }
 
-function appendToDo(newToDo) {
-  mainContainer.insertAdjacentHTML("afterbegin", `<article class="article__card" data-id="${newToDo.id}">
-        <h2 class="article__card--title">"${newToDo.title}"</h2>
-        <div>
-          <img>
-        </div>
-        <footer>
-          <div>
-            <img>
-            <p>Urgent</p>
-          </div>
-          <div>
-            <img>
-            <p>Delete</p> 
-          </div>
-        </footer>
-        </article>"`);
 
-}
 
 
 
@@ -102,46 +164,9 @@ function appendToDo(newToDo) {
 //   return taskInput.value;
 // }
 
-function getToDoId(e) {
-  console.log("get id firing")
-  return event.target.closest(".article__card").dataset("data-id")
-}
-
-function getIndex(e) {
-  console.log("get index firing")
-  var id = event.target.closest(".article__card").dataset.id;
-  var getIndex = globalArray.findIndexobj (function(){
-    return parseInt(id) === obj.id
-  })
-  return getIndex
-  }
 
 
-// function createTaskItem() {
-//   event.preventDefault();
-//   var newTodoItem = {
-//     id: Date.now(),
-//     title: taskListInput.value,
-//     completed: false
-//   }
-//   appendTaskItem(newTodoItem);
-//   TaskListItems.push(newTodoItem);
-//   return newTodoItem;
-// };
 
-function createToDoList(obj) {
-  console.log("create to do list firing")
-  var id = obj.id;
-  var newTitle = obj.title
-  var newToDo = new ToDoList({
-    id: Date.now(),
-    title: taskInput.value,
-    tasks: [],
-    urgent: false,
-  })
-  appendToDo(newTodo);
- 
-}
 
 // function appendTaskItem(object) {
 //   event.preventDefault();
