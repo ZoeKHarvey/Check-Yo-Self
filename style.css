@@ -1,0 +1,165 @@
+* {
+/*  border: solid pink 1px;*/
+  margin: 0;
+}
+
+body {
+  font-family: 'Open Sans';
+
+  
+}
+
+header {
+  background-color: #1F1F3D;
+  width:100%;
+  height: 5em;
+  display: flex;
+
+}
+
+main {
+  display:flex;
+  height: 120vh;
+
+}
+
+h1 {
+  color: white;
+  margin-top: .5%;
+  margin-left: 1%;
+  font-size: 2.5em;
+}
+
+span {
+  color: #FFC30C;
+}
+
+.section__main {
+  background-color: #F3F6F7;
+  width: 66%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.section__left {
+  background-color: #587A8A;
+  width: 34%;
+  height: 100%;
+  display: inline-block;
+  grid-column: first;
+}
+
+.header__div--search {
+  margin-left: auto;
+  margin-top:.75%;
+  margin-right: 1%;
+  height: 84%;
+  width: 33%;
+  display: flex;
+}
+
+.header__icon--search {
+  padding: 2%;
+  max-width: 10%;
+  height: 42%;
+  background: #F3F6F7;
+  margin-top:1%;
+}
+
+.header__input--search{
+  width:91%;
+  height: 62%;
+  font-family: 'Open Sans';
+  font-size: 1em;
+  margin-top: 1%;
+}
+
+.section__p--task-title,
+.section__p--task-item {
+  color: #F3F6F7;
+  margin-top: 10%;
+  margin-left: 2%;
+  font-weight: 600;
+}
+
+.section__input--title {
+  width:85%;
+  height: 7vh;
+  margin-left: 2%;
+  border: solid #1F1F3D 2px;
+  margin-top: 2%;
+}
+
+.section__input--task {
+  height: 7vh;
+  margin-left: 2%;
+  margin-top: 2%;
+  width: 75%;
+  border: solid #1F1F3D 2px;
+}
+
+.section__button--plus {
+  background-color: #1F1F3D;
+  color: white;
+  width: 13%;
+  height: 8vh;
+}
+
+.section__button {
+  width: 88%;
+  height: 7vh;
+  margin-left: 7%;
+  color:white;
+  background-color: #1F1F3D;
+  font-size: 1.25em;
+  font-weight: 600;
+  margin-top: 7%; ;
+}
+
+.section__button--filter {
+   border-color: #782616;
+   background-color: #EF4A23;
+   margin-top: 10%;
+}
+
+
+.section__right {
+  width:34%;
+  display: inline-block;
+  grid-column: third;
+  background-color: #F3F6F7;
+}
+
+.article__card {
+  width: 30%;
+  background-color: #FFE89D;
+  border: solid #FFC30C 2px;
+  width: 40%;
+}
+
+.section__button--delete {
+  max-width: 10%;
+}
+
+ul {
+  padding: 0;
+  margin-top:6%;
+  margin-left: 11%;
+  display: flex;
+  flex-direction: column;
+}
+
+li {
+  list-style: none;
+  color: white;
+  display: inline-block;
+  font-size: 2em;
+  padding-left: 6%;
+  display: flex;
+}
+
+.ul__li {
+  display: flex;
+  
+}
