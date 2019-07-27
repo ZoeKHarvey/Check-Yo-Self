@@ -161,5 +161,23 @@ li {
 
 .ul__li {
   display: flex;
-  
+
+}
+
+.article__card--delete-both{
+  margin-left:auto;
+  margin-right:5%;
+}
+
+.article__img--delete {
+  max-width: max-width:55%;
+}
+
+footer{
+  display: flex;
+  border-top: solid #FFC30C 2px;
+}
+
+.article__card--title {
+  border: solid #FFC30C 2px;
 }
