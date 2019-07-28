@@ -11,11 +11,17 @@ var urgencyButton = document.querySelector(".section__button--filter");
 var leftSide = document.querySelector(".section__left")
 var tasks = document.querySelector(".section__task--list")
 var addButton = document.querySelector(".section__button--plus")
+// var sideTasks = document.querySelector(".ul__li")
+// var sideDelete = document.querySelector("section__button--delete")
+
 
 window.addEventListener('load', initializePage);
 // makeTaskBtn.addEventListener('click', mainEvent);
 addTaskButton.addEventListener("click", insertTask);
-mainContainer.addEventListener('click', removeTask);
+mainContainer.addEventListener('click', removeCard);
+// sideTasks.addEventListener("click", removeSideTask)
+
+
 
 
 saveButton.addEventListener("click", mainEvent)
@@ -24,7 +30,13 @@ mainContainer.addEventListener("mouseout", eventHandlerHoverClear)
 
 function mainEvent() {
   createToDoList();
+  saveTask();
 }
+
+// function removeSideTask(e) {
+//   console.log("remove task firing")
+//   e.target.closest(".section__ul--task").remove()
+// }
 
 function initializePage() {
   var tempArray = getExistingTasks();
@@ -40,16 +52,48 @@ function initializePage() {
  function loadTasks(tempArray) {
   tempArray.forEach(function(element){
     appendToDo(element);
-    var todo = new ToDoList(element)
-    globalArray.push(todo)
+    var newToDo = new ToDoList(element)
+    globalArray.push(newToDo)
   })
  }
 
  function insertTask() {
+  var task = new Task({
+    id:Date.now(),
+    isCompleted: false,
+    text:taskInput.value,
+  })
+  tasksArray.push(task)
   var taskInsert = taskInput.value;
   tasks.insertAdjacentHTML("afterEnd", `<ul class="section__ul--task"><div class="ul__li"> <img src="icons/delete.svg" class="section__button--delete"><li class="task__body">${taskInsert}</div></ul>`)
   taskInput.value = "";
  }
+
+ function saveTask(newToDo, e) {
+  if (tasksArray.length === 0 || taskInput.value ==="") {
+    return "No Inputs"
+  } else {
+    var newToDo = new ToDoList({
+      id: Date.time(),
+      title: taskInput.value,
+      tasks: [],
+      urgent: false,
+    });
+    globalArray.push(newToDo);
+    globalArray[0].updateTask(tasksArray[0])
+    newToDo.saveToStorage(globalArray);
+    appendToDo(newToDo);
+    tasksArray = []
+  }
+
+
+function populateTasks(array) {
+  var list = `<ul class="article__ul"`;
+  tasksArray.forEach(function(taskItem){
+    list += `li class="article__ul--li" data-id="${taskItem.id}" <img src="icons/checkbox.svg" class="article__img--checkbox">${taskItem.text}`
+  })
+  return list
+}
 
  function createToDoList() {
   console.log("create to do list firing")
@@ -65,6 +109,7 @@ function initializePage() {
 }
 
 
+
 function appendToDo(newToDo) {
   console.log(newToDo)
   mainContainer.insertAdjacentHTML("afterbegin", `<article class="article__card" data-id=${newToDo.id}> 
@@ -72,6 +117,7 @@ function appendToDo(newToDo) {
     <img class="article__img--check" src=${checkmarkImgSource}>
         <h2 class="article__card--title">${newToDo.title}</h2>
     </div>
+    <div class="aricle__ul--item">${populateTasks(globalArray)}</div>
         <footer>
             <div class="article__card--urgent-both">
             <img class="article__img--urgent" src=${urgentImgSource}>
@@ -126,7 +172,7 @@ function findIndex(event) {
   return index
   }
 
- function removeTask(e) {
+ function removeCard(e) {
     if(e.target.className === "article__img--delete"){
       var index = findIndex(e)
       globalArray[index].deleteFromStorage(getToDoId(e))
@@ -135,6 +181,8 @@ function findIndex(event) {
     }
 
 
+
+}
 
 // function windowHandler() {
 //   mapLocalStorage()
