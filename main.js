@@ -11,7 +11,7 @@ var leftSide = document.querySelector(".section__left")
 var tasks = document.querySelector(".section__task--list")
 var addButton = document.querySelector(".section__button--plus")
 
-// window.addEventListener('load', initializePage);
+window.addEventListener('load', initializePage);
 // makeTaskBtn.addEventListener('click', mainEvent);
 addTaskButton.addEventListener("click", insertTask);
 // mainContainer.addEventListener('click', removeTask);
@@ -19,7 +19,8 @@ addTaskButton.addEventListener("click", insertTask);
 
 saveButton.addEventListener("click", mainEvent)
 mainContainer.addEventListener("mouseover", eventHandlerHover);
-mainContainer.addEventListener("mouseout", eventHandlerHoverClear)
+mainContainer.addEventListener("mouseout", eventHandlerHoverClear);
+mainContainer.addEventListener("click", removeTask);
 
 function mainEvent() {
   createToDoList();
@@ -29,34 +30,55 @@ function initializePage() {
   var tempArray = getExistingTasks();
     if(tempArray.length >0) {
       loadTasks(tempArray);
-      removePrompt();
+      // removePrompt();
     }
   }
  
  function getExistingTasks() {
-  return JSON.parse(localStorage.getItem("toDoArray"))
+  return JSON.parse(localStorage.getItem("toDoListArray"))
  }
 
  function loadTasks(tempArray) {
   tempArray.forEach(function(element){
-    buildTask(element);
+   appendToDo(element);
     var todo = new ToDoList(element)
     globalArray.push(todo)
   })
  }
 
- function insertTask() {
-  var taskInsert = taskInput.value;
-  tasks.insertAdjacentHTML("afterEnd", `<ul class="section__ul--task"><div class="ul__li"> <img src="icons/delete.svg" class="section__button--delete"><li class="task__body">${taskInsert}</div></ul>`)
-  taskInput.value = "";
- }
+
+
+//  function createTasksArray() {
+//   localStorage.setItem("tasksArray", JSON.stringify([]))
+//  }
+
+//  function pushTasksToStorage() {
+//   localStorage.setItem("tasksArray", JSON.stringify(tasksArray))
+//  }
+
+// function getTasksFromStorage() {
+//   return JSON.parse(localStorage.getItem("tasksArray"))
+// }
+
+// function createNewTask() {
+//   var task = {
+//     id: Date.now(),
+//     task: taskInput.value,
+//     done: false,
+//   }
+//   var tasksArray = JSON.parse(localStorage.getItem("tasksArray"));
+//   pushTasksToStorage(tasksArray)
+//   displayNewTask(newToDo)
+// }
 
  function createToDoList() {
   console.log("create to do list firing")
+  // var tasksArray = getTasksFromStorage()
   var newToDo = new ToDoList({
     id: Date.now(),
     title: titleInput.value,
     tasks: [],
+    // tasksArray,
     urgent: false,
   })
   appendToDo(newToDo);
@@ -71,10 +93,11 @@ function appendToDo(newToDo) {
     <div class="article__card--task"
     <img class="article__img--check" src=${checkmarkImgSource}>
         <h2 class="article__card--title">${newToDo.title}</h2>
+        <p class "article__body">${populateTasks(toDoList.tasks)}</p>)
     </div>
         <footer>
             <div class="article__card--urgent-both">
-            <img class="article__img--urgent" src=${urgentImgSource}>
+            <img class="article__img--urgent" src="icons/urgent.svg">
             <p class="article__card--urgent">Urgent</p>
           </div>
           <div class="article__card--delete-both">
@@ -85,13 +108,16 @@ function appendToDo(newToDo) {
         </article>`);
 }
 
-function urgentImgSource(newToDo) {
-  var imgSource = "icons/urgent.svg";
-  if (toDo.urgent === true) {
-    imgSource = "icons/urgent-active.svg"
-  }
-  return imgSource
-}
+
+ 
+
+// function urgentImgSource(newToDo) {
+//   var imgSource = "icons/urgent.svg";
+//   if (toDo.urgent === true) {
+//     imgSource = "icons/urgent-active.svg"
+//   }
+//   return imgSource
+// }
 
 function checkmarkImgSource(e) {
   if (e.target.classList.contains("article__img--check")) {
@@ -113,17 +139,22 @@ function eventHandlerHoverClear(e) {
 
 function getToDoId(e) {
   console.log("get id firing")
-  return event.target.closest(".article__card").dataset("data-id")
+  return event.target.closest(".article__card").dataset.id
 }
 
 function getIndex(e) {
   console.log("get index firing")
   var id = event.target.closest(".article__card").dataset.id;
-  var getIndex = globalArray.findIndexobj (function(){
+  var getIndex = globalArray.findIndex(obj => {
     return parseInt(id) === obj.id
   })
   return getIndex
   }
+
+ 
+
+
+  
 
 // function removeTask(e) {
 //   if(e.target.className ===)

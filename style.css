@@ -3,10 +3,12 @@
   margin: 0;
 }
 
-body {
-  font-family: 'Open Sans';
+.article__ul{
+  border-color:red;
+}
 
-  
+body {
+  font-family: 'Open Sans', bold;
 }
 
 header {
@@ -133,9 +135,13 @@ span {
 
 .article__card {
   width: 30%;
+ border: solid #C7D3D8 2px;
+  width: 40%;
+}
+
+.article__card:hover {
   background-color: #FFE89D;
   border: solid #FFC30C 2px;
-  width: 40%;
 }
 
 .section__button--delete {
@@ -175,9 +181,18 @@ li {
 
 footer{
   display: flex;
-  border-top: solid #FFC30C 2px;
+  border: solid #C7D3D8 2px;
+
+}
+
+footer:hover{
+   border-top: solid #FFC30C 2px;
 }
 
 .article__card--title {
-  border: solid #FFC30C 2px;
+  border-bottom:solid #C7D3D8 2px;
+}
+
+.article__card--title:hover {
+  border-bottom: solid #FFC30C 2px;
 }
