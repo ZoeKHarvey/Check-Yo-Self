@@ -145,7 +145,7 @@ span {
   width: 40%;
 }
 
-.article__card:hover {
+.article__card.urgent {
   background-color: #FFE89D;
   border: solid #FFC30C 2px;
 }
@@ -209,7 +209,25 @@ footer:hover{
 
 .article__ul--li {
   list-style: none;
+  
+  
 }
+
+
+.checkbox-image{
+  display: inline-block;
+  background-image: url('icons/checkbox.svg');
+  background-repeat: no-repeat;
+  height: 10px;
+  width: 10px;
+}
+
+.checkbox-image.complete{
+  background-image: url('icons/checkbox-active.svg');
+}
+
+
+
 
 .h3__prompt {
   font-size: 3em;
