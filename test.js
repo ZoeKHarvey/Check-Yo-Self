@@ -1,8 +1,9 @@
+
 var globalArray = [];
 var tasksArray = [];
 var titleInput = document.querySelector(".section__input--title");
 var taskInput = document.querySelector(".section__input--task");
-var addTaskButton = document.querySelector(".section__img--plus");
+var addTaskButton = document.querySelector(".section__button--plus");
 var saveButton =document.querySelector(".section__button--make-task");
 var clearButton = document.querySelector(".section__button--clear")
 var searchInput = document.querySelector(".header__input--search");
@@ -10,66 +11,39 @@ var mainContainer = document.querySelector(".section__main");
 var urgencyButton = document.querySelector(".section__button--filter");
 var leftSide = document.querySelector(".section__left")
 var tasks = document.querySelector(".section__task--list")
-var addButton = document.querySelector(".section__img--plus")
-var sideTasks = document.querySelector(".section__ul--task")
-// var sideDelete = document.querySelector(".section__button--delete")
+var addButton = document.querySelector(".section__button--plus")
+// var sideTasks = document.querySelector(".ul__li")
+// var sideDelete = document.querySelector("section__button--delete")
 
 
 window.addEventListener('load', initializePage);
 // makeTaskBtn.addEventListener('click', mainEvent);
-addButton.addEventListener("click", insertTask);
-titleInput.addEventListener("keyup", checkInputHandler)
-taskInput.addEventListener("keyup", checkInputHandler)
+addTaskButton.addEventListener("click", insertTask);
 mainContainer.addEventListener('click', removeCard);
-leftSide.addEventListener("click", handleLeftSide)
-saveButton.addEventListener("click", saveEvent)
-clearButton.addEventListener("click", clearEvent)
+// sideTasks.addEventListener("click", removeSideTask)
+
+
+
+
+saveButton.addEventListener("click", mainEvent)
 mainContainer.addEventListener("mouseover", eventHandlerHover);
-mainContainer.addEventListener("mouseout", eventHandlerHoverClear);
-// saveButton.addEventListener("mouseout", updateTasks);
+mainContainer.addEventListener("mouseout", eventHandlerHoverClear)
 
-function checkInputHandler(e) {
-  enablePlusButton();
-  enableClearButton()
-}
-
-
-function saveEvent() {
+function mainEvent() {
   createToDoList();
-  titleInput.value = ""
-  console.log(tasksArray)
-  
-  // saveTask();
+  saveTask();
 }
-
-function clearEvent() {
-  titleInput.value = ""
-  taskInput.value = ""
-
-}
-
-function handleLeftSide(e){
-    enableMakeTaskButton(e)
-    enableClearButton(e)
-    promptUser()
-}
-
-
-
 
 // function removeSideTask(e) {
 //   console.log("remove task firing")
-//  if(e.target.className === "section__button--delete"){
-//       var index = findIndex(e)
-//       globalArray[index].deleteFromStorage(getToDoId(e))
-//       event.target.closest(".article__card").remove()
-// }}
+//   e.target.closest(".section__ul--task").remove()
+// }
 
 function initializePage() {
   var tempArray = getExistingTasks();
     if(tempArray.length >0) {
       loadTasks(tempArray);
-    } promptUser()
+    }
   }
  
  function getExistingTasks() {
@@ -85,16 +59,14 @@ function initializePage() {
  }
 
  function insertTask() {
-  console.log("instert task firing")
   var task = new Task({
     id:Date.now(),
     isCompleted: false,
     text:taskInput.value,
   })
-  var taskInsert = taskInput.value;
-  tasks.insertAdjacentHTML("afterEnd", `<div class="ul__li"><ul class="section__ul--task"><img src="icons/delete.svg" class="section__button--delete"><li class="task__body">${taskInsert}</div></ul>`)
   tasksArray.push(task)
-  console.log(tasksArray)
+  var taskInsert = taskInput.value;
+  tasks.insertAdjacentHTML("afterEnd", `<ul class="section__ul--task"><div class="ul__li"> <img src="icons/delete.svg" class="section__button--delete"><li class="task__body">${taskInsert}</div></ul>`)
   taskInput.value = "";
  }
 
@@ -108,21 +80,24 @@ function initializePage() {
       tasks: [],
       urgent: false,
     });
+    globalArray.push(newToDo);
+    globalArray[0].updateTask(tasksArray[0])
     newToDo.saveToStorage(globalArray);
     appendToDo(newToDo);
-    console.log(tasksArray)
-  }}
+    tasksArray = []
+  }
 
 
 function populateTasks(array) {
   var list = `<ul class="article__ul"`;
   tasksArray.forEach(function(taskItem){
-    list += `<div class="article__ul--all"><li class="article__ul--li" data-id="${taskItem.id}"><img class="article__img--check" src="icons/checkbox.svg">${taskItem.text}</li></div>`
+    list += `li class="article__ul--li" data-id="${taskItem.id}" <img src="icons/checkbox.svg" class="article__img--checkbox">${taskItem.text}`
   })
   return list
 }
 
  function createToDoList() {
+  console.log("create to do list firing")
   var newToDo = new ToDoList({
     id: Date.now(),
     title: titleInput.value,
@@ -134,27 +109,19 @@ function populateTasks(array) {
   newToDo.saveToStorage(globalArray);
 }
 
-// function urgentImgSource() {
-//   console.log("urgent button shit firing")
-//   var imgSource = "icons/urgent.svg";
-//   if (toDo.urgent === true) {
-//     imgSource = "icons/urgent-active.svg"
-//     debugger;
-//   }
-//   return imgSource
-// }
+
 
 function appendToDo(newToDo) {
-  console.log("new to do ==", newToDo)
+  console.log(newToDo)
   mainContainer.insertAdjacentHTML("afterbegin", `<article class="article__card" data-id=${newToDo.id}> 
     <div class="article__card--task"
+    <img class="article__img--check" src=${checkmarkImgSource}>
         <h2 class="article__card--title">${newToDo.title}</h2>
     </div>
-    <div class="article__ul--item">${populateTasks(globalArray)}
-    </div>
+    <div class="aricle__ul--item">${populateTasks(globalArray)}</div>
         <footer>
             <div class="article__card--urgent-both">
-            <img class="article__img--urgent" src="icons/urgent.svg">
+            <img class="article__img--urgent" src=${urgentImgSource}>
             <p class="article__card--urgent">Urgent</p>
           </div>
           <div class="article__card--delete-both">
@@ -165,13 +132,13 @@ function appendToDo(newToDo) {
         </article>`);
 }
 
-function removeCard(e) {
-    if(e.target.className === "article__img--delete"){
-      var index = findIndex(e)
-      globalArray[index].deleteFromStorage(getToDoId(e))
-      event.target.closest(".article__card").remove()
-    } promptUser()
-    }
+function urgentImgSource(newToDo) {
+  var imgSource = "icons/urgent.svg";
+  if (toDo.urgent === true) {
+    imgSource = "icons/urgent-active.svg"
+  }
+  return imgSource
+}
 
 function checkmarkImgSource(e) {
   if (e.target.classList.contains("article__img--check")) {
@@ -192,11 +159,13 @@ function eventHandlerHoverClear(e) {
 }
 
 function getToDoId(e) {
+  console.log("get id firing")
   return event.target.closest(".article__card").dataset.id
 }
 
 
 function findIndex(event) {
+  console.log("get index firing")
   var id = event.target.closest(".article__card").dataset.id;
   var index = globalArray.findIndex(obj => {
     return parseInt(id) === obj.id
@@ -204,56 +173,17 @@ function findIndex(event) {
   return index
   }
 
-function promptUser(){
-  console.log("prompt user firing === global array length", globalArray.length)
-  var prompt = document.querySelector(".h3__prompt")
-  if(globalArray.length > 0) {
-   prompt.style.visibility = "hidden";
-  } else {
-    prompt.style.visibility = "visible"
-  }
+ function removeCard(e) {
+    if(e.target.className === "article__img--delete"){
+      var index = findIndex(e)
+      globalArray[index].deleteFromStorage(getToDoId(e))
+      event.target.closest(".article__card").remove()
+    }
+    }
+
+
+
 }
-
-
-
-
-
-/*******  BUTTONS *******/
-
-function enableMakeTaskButton(e) {
-  console.log("tasks array length!", tasksArray.length)
-  if (tasksArray.length ===0){
-    saveButton.disabled = true
-  }else{
-    saveButton.disabled = false;
-    
-} }
-
-function enablePlusButton(e) {
-  if (titleInput.value !="" && taskInput.value !=""){
-    addButton.disabled = false 
-  }else{
-    addButton.disabled = true;
-  }
-}
-
-function enableClearButton(e) {
-  if (titleInput.value > "" || taskInput.value >"") {
-    clearButton.disabled = false
-  }else{
-    clearButton.disabled = true
-  }
-}
-
-// function clearInputs(e) {
-//   console.log("clear inputs firing")
-//   taskInput.value === "" 
-//   titleInput.value === ""
-//   console.log("title value", titleInput.value)
-// }
-
-
-
 
 // function windowHandler() {
 //   mapLocalStorage()
