@@ -21,7 +21,7 @@ addButton.addEventListener("click", insertTask);
 titleInput.addEventListener("keyup", checkInputHandler)
 taskInput.addEventListener("keyup", checkInputHandler)
 mainContainer.addEventListener('click', removeCard);
-leftSide.addEventListener("click", handleLeftSide)
+leftSide.addEventListener("click", removeTask)
 saveButton.addEventListener("click", saveToDoList)
 clearButton.addEventListener("click", clearEvent)
 mainContainer.addEventListener("mouseover", eventHandlerHover);
@@ -30,7 +30,8 @@ mainContainer.addEventListener("mouseout", eventHandlerHoverClear);
 
 function checkInputHandler(e) {
   enablePlusButton();
-  enableClearButton()
+  enableClearButton();
+  enableMakeTaskButton()
 }
 
 
@@ -39,7 +40,6 @@ function saveEvent() {
   titleInput.value = ""
   console.log(tasksArray);
   promptUser()
-  console.log("prompt user save event firing")
   
   // saveTask();
 }
@@ -50,7 +50,7 @@ function clearEvent() {
 }
 
 function handleLeftSide(e){
-    // enableMakeTaskButton(e)
+    enableMakeTaskButton(e)
     // enableClearButton(e)
     // promptUser()
 }
@@ -83,30 +83,16 @@ function markAsUrgent(e) {
   }else{
     todoClass.updateToDo('', false)
   }
-  console.log(todoClass)
   todoClass.saveToStorage();
-
 }
 
-
-// function removeSideTask(e) {
-//   console.log("remove task firing")
-//  if(e.target.className === "section__button--delete"){
-//       var index = findIndex(e)
-//       globalArray[index].deleteFromStorage(getToDoId(e))
-//       event.target.closest(".article__card").remove()
-// }}
-
 function initializePage() {
-  for (let i = 0; i<localStorage.length; i++){
+  for (var i = 0; i<localStorage.length; i++){
     var toDoListId = localStorage.key(i)
-    console.log('local storage todolistid:' + toDoListId);
-
     var ToDoListClassItem = new ToDoList(false, toDoListId);
     appendToDo(ToDoListClassItem);
     globalArray.push(ToDoListClassItem);
   }
-
     promptUser()
   }
 
@@ -118,28 +104,29 @@ function initializePage() {
     text:taskInput.value,
   }
   var taskInsert = taskInput.value;
+  console.log(taskInsert)
   tasks.insertAdjacentHTML("beforeend", `<div class="ul__li" id="${task.id}"><ul class="section__ul--task"><img src="icons/delete.svg" class="section__button--delete"><li class="task__body">${task.text}</div></ul>`)
   taskInput.value = "";
-  saveButton.disabled = false;
  }
 
  function saveToDoList(newToDo, e) {
-  console.log('save to do list')
   var newToDoList_ID = 'todo' + Date.now();
   var newToDoList = new ToDoList(true, newToDoList_ID, titleInput.value);
-
   var taskElements = document.querySelectorAll('.ul__li');
   for(var i=0; i<taskElements.length; i++){
-    console.log(taskElements[i])
     var taskID = taskElements[i].id;
     var taskText = taskElements[i].querySelector('.task__body').innerText;
     newToDoList.updateTask(taskID, false, taskText)
   }
-
+  var classList = document.querySelector(".section__task--list")
   newToDoList.saveToStorage();
   appendToDo(newToDoList);
-  globalArray.push(newToDoList)
+  globalArray.push(newToDoList);
+  titleInput.value = ""
+  classList.remove()
+  saveButton.disabled = true
   promptUser()
+
 }
 
 
@@ -157,8 +144,6 @@ function initializePage() {
 }
 
 function appendToDo(newToDo) {
-  console.log("new to do ==", newToDo);
-
   if(newToDo.urgent){
     var urgentClass= 'urgent'
   } else {
@@ -194,6 +179,13 @@ function removeCard(e) {
     } 
 }
 
+function removeTask(e){
+  if(e.target.className === "section__button--delete") {
+    var taskElement = e.target.closest(".ul__li");
+    taskElement.parentElement.removeChild(taskElement)
+  }
+}
+
 function checkmarkImgSource(e) {
   if (e.target.classList.contains("article__img--check")) {
     e.target.src = "icons/checkbox-active.svg"
@@ -218,7 +210,6 @@ function getToDoId(e) {
   return event.target.closest(".article__card").dataset.id
 }
 
-
 function findIndex(event) {
   var id = event.target.closest(".article__card").dataset.id;
   var index = globalArray.findIndex(obj => {
@@ -238,7 +229,6 @@ function promptUser(){
   }
 }
 
-
 /*******  BUTTONS *******/
 
 function enablePlusButton(e) {
@@ -257,3 +247,15 @@ function enableClearButton(e) {
   }
 }
 
+function enableMakeTaskButton(e){
+  console.log("enable task firing")
+  var listElements = document.querySelector(".section__task--list")
+  console.log("list elements ==", listElements)
+  if(titleInput.value === "" && listElements.innerHTML === ""){
+    console.log("TITLE ELEMENT ===", titleInput.value)
+    console.log("LIST ELEMENTS.INNERHTML===", listElements.innerHTML)
+    saveButton.disabled = true;
+  } else {
+    saveButton.disabled = false
+  }
+}
