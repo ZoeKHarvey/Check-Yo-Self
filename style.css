@@ -1,5 +1,5 @@
 * {
-/*  border: solid pink 1px;*/
+/*  border: solid #32CD32 1px;*/
   margin: 0;
 }
 
@@ -93,19 +93,25 @@ span {
   margin-top: 2%;
 }
 
+.section__input--button {
+  display: flex;
+}
+
 .section__input--task {
   height: 7vh;
   margin-left: 2%;
-  margin-top: 2%;
   width: 75%;
   border: solid #1F1F3D 2px;
 }
 
-.section__button--plus {
+.section__img--plus {
   background-color: #1F1F3D;
-  color: white;
-  width: 13%;
-  height: 8vh;
+  max-width: 12%;
+  height: 7.9vh;
+}
+
+.plus__img {
+  height: 100%;
 }
 
 .section__button {
@@ -156,7 +162,7 @@ ul {
   flex-direction: column;
 }
 
-li {
+.ul__li {
   list-style: none;
   color: white;
   display: inline-block;
@@ -195,4 +201,24 @@ footer:hover{
 
 .article__card--title:hover {
   border-bottom: solid #FFC30C 2px;
+}
+
+.article__img--check {
+  max-width: 10%;
+}
+
+.article__ul--li {
+  list-style: none;
+}
+
+.h3__prompt {
+  font-size: 3em;
+  color: #C7D3D8 ;
+  margin: auto;
+}
+
+.h3__prompt:hover {
+  font-size: 5em;
+  margin: auto;
+  color: #EF4A23;
 }

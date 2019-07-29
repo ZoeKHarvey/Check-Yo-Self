@@ -3,7 +3,11 @@ class ToDoList {
     this.id = obj.id;
     this.title = obj.title;
     this.urgent = obj.urgent || false;
-    this.tasks = obj.tasks;
+    this.tasks = obj.task;
+  }
+
+  addTask(obj){
+    this.tasks.push(new Task(obj));
   }
 
   saveToStorage(toDos) {
@@ -20,8 +24,10 @@ class ToDoList {
 
   }
 
-  updateTask(task) {
-    this.tasks.push(task)
+  updateTask(taskObj) {
+    console.log("update task firing")
+    this.tasks.push(taskObj)
+    console.log("task")
 
 }
 }
@@ -33,3 +39,4 @@ class Task {
     this.text = obj.text;
   }
 }
+
