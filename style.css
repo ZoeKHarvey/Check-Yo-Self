@@ -150,8 +150,16 @@ span {
   border: solid #FFC30C 2px;
 }
 
+.article__img--urgent.urgent {
+  background-image: url("icons/urgent-active.svg")
+}
+
+.article__img--urgent {
+  background-image: url("icons/urgent.svg");
+}
+
 .section__button--delete {
-  max-width: 10%;
+  max-width: 52%;
 }
 
 ul {
@@ -191,16 +199,8 @@ footer{
 
 }
 
-footer:hover{
-   border-top: solid #FFC30C 2px;
-}
-
 .article__card--title {
   border-bottom:solid #C7D3D8 2px;
-}
-
-.article__card--title:hover {
-  border-bottom: solid #FFC30C 2px;
 }
 
 .article__img--check {
@@ -211,6 +211,11 @@ footer:hover{
   list-style: none;
   
   
+}
+
+.section__ul--task {
+  list-style: none;
+  display: flex;
 }
 
 
@@ -225,6 +230,18 @@ footer:hover{
 .checkbox-image.complete{
   background-image: url('icons/checkbox-active.svg');
 }
+
+/*.article__img--urgent{
+  background-image: url("icons/urgent.svg");
+}
+
+.article__img--urgent.true{
+  background-image: url("icons/urgent-active.svg");*/
+}
+/*
+.article__ul--li.complete {
+  font-style: italic;
+}*/
 
 
 
