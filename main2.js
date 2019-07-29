@@ -22,7 +22,7 @@ titleInput.addEventListener("keyup", checkInputHandler)
 taskInput.addEventListener("keyup", checkInputHandler)
 mainContainer.addEventListener('click', removeCard);
 leftSide.addEventListener("click", handleLeftSide)
-saveButton.addEventListener("click", saveEvent)
+saveButton.addEventListener("click", saveToDoList)
 clearButton.addEventListener("click", clearEvent)
 mainContainer.addEventListener("mouseover", eventHandlerHover);
 mainContainer.addEventListener("mouseout", eventHandlerHoverClear);
@@ -49,12 +49,42 @@ function clearEvent() {
 }
 
 function handleLeftSide(e){
-    enableMakeTaskButton(e)
-    enableClearButton(e)
-    promptUser()
+    // enableMakeTaskButton(e)
+    // enableClearButton(e)
+    // promptUser()
 }
 
 
+function getGlobalItem(id){
+  return globalArray.filter(todo =>{ return todo.id == id})[0]
+}
+
+function completeCheckBox(e) {
+  let taskID = e.target.closest('.article__ul--li').dataset.id;
+  let todoId = e.target.closest('.article__card').dataset.id;
+  
+  let todoClass = getGlobalItem(todoId);
+  todoClass.updateTask(taskID, true);
+  console.log(taskID, todoClass)
+  todoClass.saveToStorage()
+
+  e.target.closest('.article__ul--li').querySelector('.checkbox-image').classList.toggle('complete')
+}
+
+function markAsUrgent(e) {
+
+  let todoId = e.target.closest('.article__card').dataset.id;
+  
+  let todoClass = getGlobalItem(todoId);
+  e.target.closest('.article__card').classList.toggle('urgent')
+  if (e.target.closest('.article__card').classList.contains("urgent")){
+    todoClass.updateToDo('', true)
+  }else{
+    todoClass.updateToDo('', false)
+  }
+  console.log(todoClass)
+  todoClass.saveToStorage();
+}
 
 
 // function removeSideTask(e) {
@@ -66,61 +96,52 @@ function handleLeftSide(e){
 // }}
 
 function initializePage() {
-  var tempArray = getExistingTasks();
-    if(tempArray.length >0) {
-      loadTasks(tempArray);
-    } promptUser()
+  for (let i = 0; i<localStorage.length; i++){
+    const toDoListId = localStorage.key(i)
+    console.log('local storage todolistid:' + toDoListId);
+
+    let ToDoListClassItem = new ToDoList(false, toDoListId);
+    appendToDo(ToDoListClassItem);
+    globalArray.push(ToDoListClassItem);
+  }
+
+    promptUser()
   }
  
- function getExistingTasks() {
-  return JSON.parse(localStorage.getItem("toDoListArray"))
- }
 
- function loadTasks(tempArray) {
-  tempArray.forEach(function(element){
-    appendToDo(element);
-    var newToDo = new ToDoList(element)
-    globalArray.push(newToDo)
-  })
- }
 
  function insertTask() {
-  console.log("instert task firing")
-  var task = new Task({
-    id:Date.now(),
+  console.log("instert task firing");
+  var task = {
+    id: 'tsk' + Date.now(),
     isCompleted: false,
     text:taskInput.value,
-  })
+  }
   var taskInsert = taskInput.value;
-  tasks.insertAdjacentHTML("afterEnd", `<div class="ul__li"><ul class="section__ul--task"><img src="icons/delete.svg" class="section__button--delete"><li class="task__body">${taskInsert}</div></ul>`)
-  tasksArray.push(task)
-  console.log(tasksArray)
+  tasks.insertAdjacentHTML("beforeend", `<div class="ul__li" id="${task.id}"><ul class="section__ul--task"><img src="icons/delete.svg" class="section__button--delete"><li class="task__body">${task.text}</div></ul>`)
   taskInput.value = "";
+  saveButton.disabled = false;
  }
 
- function saveTask(newToDo, e) {
-  if (tasksArray.length === 0 || taskInput.value ==="") {
-    return "No Inputs"
-  } else {
-    var newToDo = new ToDoList({
-      id: Date.time(),
-      title: taskInput.value,
-      tasks: [],
-      urgent: false,
-    });
-    newToDo.saveToStorage(globalArray);
-    appendToDo(newToDo);
-    console.log(tasksArray)
-  }}
+ function saveToDoList(newToDo, e) {
+  console.log('save to do list')
+  let newToDoList_ID = 'todo' + Date.now();
+  var newToDoList = new ToDoList(true, newToDoList_ID, titleInput.value);
 
+  let taskElements = document.querySelectorAll('.ul__li');
+  for(let i=0; i<taskElements.length; i++){
+    console.log(taskElements[i])
+    let taskID = taskElements[i].id;
+    let taskText = taskElements[i].querySelector('.task__body').innerText;
+    newToDoList.updateTask(taskID, false, taskText)
+  }
 
-function populateTasks(array) {
-  var list = `<ul class="article__ul"`;
-  tasksArray.forEach(function(taskItem){
-    list += `<div class="article__ul--all"><li class="article__ul--li" data-id="${taskItem.id}"><img class="article__img--check" src="icons/checkbox.svg">${taskItem.text}</li></div>`
-  })
-  return list
+  newToDoList.saveToStorage();
+  appendToDo(newToDoList);
+  globalArray.push(newToDoList)
+  console.log(newToDoList)
 }
+
 
  function createToDoList() {
   var newToDo = new ToDoList({
@@ -130,7 +151,7 @@ function populateTasks(array) {
     urgent: false,
   })
   appendToDo(newToDo);
-  globalArray.push(newToDo);
+  globalArray = newToDo;
   newToDo.saveToStorage(globalArray);
 }
 
@@ -145,16 +166,24 @@ function populateTasks(array) {
 // }
 
 function appendToDo(newToDo) {
-  console.log("new to do ==", newToDo)
-  mainContainer.insertAdjacentHTML("afterbegin", `<article class="article__card" data-id=${newToDo.id}> 
-    <div class="article__card--task"
+  console.log("new to do ==", newToDo);
+
+  if(newToDo.urgent){
+    var urgentClass= 'urgent'
+  } else {
+    var urgentClass = ''
+  }
+  console.log(urgentClass)
+  mainContainer.insertAdjacentHTML("afterbegin", `<article class="article__card ${urgentClass}" data-id="${newToDo.id}""> 
+    <div class="article__card--task">
         <h2 class="article__card--title">${newToDo.title}</h2>
     </div>
-    <div class="article__ul--item">${populateTasks(globalArray)}
+    <div class="article__ul--item">
+    ${newToDo.getTaskHTML()}
     </div>
         <footer>
             <div class="article__card--urgent-both">
-            <img class="article__img--urgent" src="icons/urgent.svg">
+            <img class="article__img--urgent" onclick="markAsUrgent(event)" src="icons/urgent.svg">
             <p class="article__card--urgent">Urgent</p>
           </div>
           <div class="article__card--delete-both">
@@ -166,12 +195,15 @@ function appendToDo(newToDo) {
 }
 
 function removeCard(e) {
+  console.log('remove')
     if(e.target.className === "article__img--delete"){
-      var index = findIndex(e)
-      globalArray[index].deleteFromStorage(getToDoId(e))
-      event.target.closest(".article__card").remove()
-    } promptUser()
-    }
+      let cardElement = e.target.closest('.article__card')
+      var cardId = cardElement.dataset.id;
+      localStorage.removeItem(cardId);
+      cardElement.parentElement.removeChild(cardElement)
+    } 
+    promptUser()
+}
 
 function checkmarkImgSource(e) {
   if (e.target.classList.contains("article__img--check")) {
@@ -219,15 +251,6 @@ function promptUser(){
 
 
 /*******  BUTTONS *******/
-
-function enableMakeTaskButton(e) {
-  console.log("tasks array length!", tasksArray.length)
-  if (tasksArray.length ===0){
-    saveButton.disabled = true
-  }else{
-    saveButton.disabled = false;
-    
-} }
 
 function enablePlusButton(e) {
   if (titleInput.value !="" && taskInput.value !=""){
