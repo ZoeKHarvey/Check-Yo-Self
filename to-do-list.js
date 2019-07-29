@@ -1,7 +1,7 @@
 class ToDoList
 {
     constructor(isNew, id, title, urgent, tasks) {
-      let localStorageStr = localStorage.getItem(id);
+      var localStorageStr = localStorage.getItem(id);
       if(isNew){
         this.id = id;
         this.title = title;
@@ -29,15 +29,12 @@ class ToDoList
     if (title){
       this.title = title;
     }
-
       this.urgent = urgency;
-
   }
-
 
   updateTask(taskID, isCompleted, text){
     var taskFound = false
-    for (let i=0; i<this.tasks.length; i++){
+    for (var i=0; i<this.tasks.length; i++){
       if (this.tasks[i].id == taskID){
         this.tasks[i].isCompleted = isCompleted;
         this.tasks[i].text = text || this.tasks[i].text;
@@ -45,7 +42,7 @@ class ToDoList
       }
     }
     if (taskFound == false){
-      let newTask = {
+      var newTask = {
         id: taskID,
         isCompleted: isCompleted || false,
         text: text || ''
@@ -55,10 +52,10 @@ class ToDoList
   }
 
   getTaskHTML(){
-    let htmlStr = '';
+    var htmlStr = '';
       this.tasks.forEach((taskItem) =>{
         console.log(taskItem)
-        let isCompletedClass = '';
+        var isCompletedClass = '';
         if(taskItem.isCompleted == true){
           isCompletedClass = 'complete'
         }
