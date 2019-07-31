@@ -68,8 +68,8 @@ function enableMakeTaskButton(e) {
     saveButton.disabled = true;
   } else {
     saveButton.disabled = false;
-  }
-}
+  };
+};
 
 function checkmarkImgSource(e) {
   if (e.target.classList.contains("article__img--check")) {
@@ -104,11 +104,11 @@ function findIndex(event) {
 function promptUser() {
   var prompt = document.querySelector(".h3__prompt");
   if (globalArray.length > 0) {
-   prompt.style.visibility = "hidden";
+    prompt.style.visibility = "hidden";
   } else {
     prompt.style.visibility = "visible";
-  }
-}
+  };
+};
 
 function initializePage() {
   for (var i = 0; i<localStorage.length; i++) {
@@ -118,15 +118,15 @@ function initializePage() {
     globalArray.push(ToDoListClassItem);
   };
     promptUser();
-  };
+};
 
- function insertTask() {
+function insertTask() {
   var tasks = document.querySelector(".section__task--list");
   var task = {
     id: 'tsk' + Date.now(),
     isCompleted: false,
     text:taskInput.value,
-  }
+  };
   var taskInsert = taskInput.value;
   tasks.insertAdjacentHTML("beforeend", 
     `<div class="ul__li" id="${task.id}">
@@ -138,9 +138,9 @@ function initializePage() {
   taskInput.value = "";
   enablePlusButton();
   enableMakeTaskButton();
- };
+};
 
- function createToDoList() {
+function createToDoList() {
   var newToDo = new ToDoList({
     id: Date.now(),
     title: titleInput.value,
@@ -157,12 +157,12 @@ function appendToDo(newToDo) {
   if (newToDo.urgent) {
     var urgentClass= "urgent'";
   } else {
-    var urgentClass = '';
+    var urgentClass = "";
   };
   if (newToDo.isDisabled() == true) {
     var disClass = "disabled";
   } else {
-    var disClass = '';
+    var disClass = "";
   };
   mainContainer.insertAdjacentHTML("afterbegin", 
     `<article class="article__card ${urgentClass} ${disClass}" data-id="${newToDo.id}"> 
@@ -183,9 +183,9 @@ function appendToDo(newToDo) {
         </div>
       </footer>
     </article>`);
-}
+};
 
- function saveToDoList(newToDo, e) {
+function saveToDoList(newToDo, e) {
   var newToDoList_ID = "todo" + Date.now();
   var newToDoList = new ToDoList(true, newToDoList_ID, titleInput.value);
   var taskElements = document.querySelectorAll(".ul__li");
@@ -206,12 +206,12 @@ function appendToDo(newToDo) {
 };
 
 function completeCheckBox(e) {
-  var card = e.target.closest(".article__card")
+  var card = e.target.closest(".article__card");
   var taskID = e.target.closest(".article__ul--li").dataset.id;
   var todoId = e.target.closest(".article__card").dataset.id;
   var todoClass = getGlobalItem(todoId);
   var checkBoxElement = e.target.closest(".article__ul--li").querySelector(".checkbox-image");
-  checkBoxElement.classList.toggle('complete');
+  checkBoxElement.classList.toggle("complete");
   if (checkBoxElement.classList.contains("complete")) {
     todoClass.updateTask(taskID, true);
   } else {
