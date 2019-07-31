@@ -8,14 +8,14 @@ class ToDoList {
       this.disabled = true;
       this.tasks = [];
     } else {
-        var obj = JSON.parse(localStorage.getItem(id));
-        this.id = obj.id;
-        this.title = obj.title;
-        this.urgent = obj.urgent || false;
-        this.disabled = obj.disabled || true;
-        this.tasks = obj.tasks || [];
+      var obj = JSON.parse(localStorage.getItem(id));
+      this.id = obj.id;
+      this.title = obj.title;
+      this.urgent = obj.urgent || false;
+      this.disabled = obj.disabled || true;
+      this.tasks = obj.tasks || [];
       };
-    };
+  };
 
   isDisabled() {
     var completedTasks = this.tasks.filter(function(task) {
@@ -60,7 +60,6 @@ class ToDoList {
       };
       this.tasks.push(newTask);
     };
-
   };
 
   getTaskHTML() {
@@ -78,5 +77,4 @@ class ToDoList {
     });
     return htmlStr
   };
-
 };
