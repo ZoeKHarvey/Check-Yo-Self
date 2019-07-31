@@ -45,8 +45,11 @@ function saveEvent() {
 }
 
 function clearEvent() {
+  var listElements = document.querySelector(".section__task--list")
   titleInput.value = ""
   taskInput.value = ""
+  listElements.innerHTML = ""
+
 }
 
 function handleLeftSide(e){
@@ -60,24 +63,39 @@ function getGlobalItem(id){
   return globalArray.filter(todo =>{ return todo.id == id})[0]
 }
 
+function italicizeFont(e){
+  
+  var checkedListItem = e.target.closest(".article__ul--li").querySelector(".article__ul--li")
+  checkedListItem.classList.toggle("complete")
+}
+
 function completeCheckBox(e) {
+  var card = e.target.closest(".article__card")
   var taskID = e.target.closest('.article__ul--li').dataset.id;
   var todoId = e.target.closest('.article__card').dataset.id;
-  
   var todoClass = getGlobalItem(todoId);
-  todoClass.updateTask(taskID, true);
-  console.log(taskID, todoClass)
-  todoClass.saveToStorage()
-
-  e.target.closest('.article__ul--li').querySelector('.checkbox-image').classList.toggle('complete')
-  // e.target.closest(".article__ul--li").querySelector(".article__ul--li").classList.toggle("complete")
+  var checkBoxElement = e.target.closest('.article__ul--li').querySelector('.checkbox-image');
+  checkBoxElement.classList.toggle('complete');
+  if (checkBoxElement.classList.contains('complete')){
+    todoClass.updateTask(taskID, true);
+  } else {
+    todoClass.updateTask(taskID, false);
+  }
+  todoClass.saveToStorage();
+  if(todoClass.isDisabled() == true){
+    card.classList.add('disabled');
+  } else {
+    card.classList.remove('disabled');
+  }
+  italicizeFont()
 }
+
 
 function markAsUrgent(e) {
   var todoId = e.target.closest('.article__card').dataset.id;
   var todoClass = getGlobalItem(todoId);
   e.target.closest('.article__card').classList.toggle('urgent')
-  e.target.closest(".article__img--urgent").classList.toggle("true")
+  e.target.closest(".urgent-image").classList.toggle("urgent")
   if (e.target.closest('.article__card').classList.contains("urgent")){
     todoClass.updateToDo('', true)
   }else{
@@ -107,6 +125,7 @@ function initializePage() {
   console.log(taskInsert)
   tasks.insertAdjacentHTML("beforeend", `<div class="ul__li" id="${task.id}"><ul class="section__ul--task"><img src="icons/delete.svg" class="section__button--delete"><li class="task__body">${task.text}</div></ul>`)
   taskInput.value = "";
+  enablePlusButton()
  }
 
  function saveToDoList(newToDo, e) {
@@ -123,12 +142,11 @@ function initializePage() {
   appendToDo(newToDoList);
   globalArray.push(newToDoList);
   titleInput.value = ""
-  classList.remove()
+  taskInput.value = ""
+  classList.innerHTML = ""
   saveButton.disabled = true
   promptUser()
-
 }
-
 
  function createToDoList() {
   var newToDo = new ToDoList({
@@ -149,8 +167,13 @@ function appendToDo(newToDo) {
   } else {
     var urgentClass = ''
   }
+  if(newToDo.isDisabled() == true){
+    var disClass = 'disabled'
+  } else {
+    var disClass = ''
+  }
   console.log(urgentClass)
-  mainContainer.insertAdjacentHTML("afterbegin", `<article class="article__card ${urgentClass}" data-id="${newToDo.id}""> 
+  mainContainer.insertAdjacentHTML("afterbegin", `<article class="article__card ${urgentClass} ${disClass}" data-id="${newToDo.id}""> 
     <div class="article__card--task">
         <h2 class="article__card--title">${newToDo.title}</h2>
     </div>
@@ -159,7 +182,7 @@ function appendToDo(newToDo) {
     </div>
         <footer>
             <div class="article__card--urgent-both">
-            <img class="article__img--urgent" onclick="markAsUrgent(event)" src="icons/urgent.svg ">
+            <span class="urgent-image ${urgentClass}"  onclick="markAsUrgent(event)""></span>
             <p class="article__card--urgent">Urgent</p>
           </div>
           <div class="article__card--delete-both">
@@ -171,8 +194,8 @@ function appendToDo(newToDo) {
 }
 
 function removeCard(e) {
-    if(e.target.className === "article__img--delete"){
-      var cardElement = e.target.closest('.article__card')
+  var cardElement = e.target.closest('.article__card')
+    if(e.target.className === "article__img--delete" && !cardElement.classList.contains('disabled')){
       var cardId = cardElement.dataset.id;
       localStorage.removeItem(cardId);
       cardElement.parentElement.removeChild(cardElement)
@@ -240,10 +263,10 @@ function enablePlusButton(e) {
 }
 
 function enableClearButton(e) {
-  if (titleInput.value > "" || taskInput.value >"") {
-    clearButton.disabled = false
-  }else{
+  if (titleInput.value === "" || taskInput.value ==="") {
     clearButton.disabled = true
+  }else{
+    clearButton.disabled = false
   }
 }
 
@@ -251,11 +274,9 @@ function enableMakeTaskButton(e){
   console.log("enable task firing")
   var listElements = document.querySelector(".section__task--list")
   console.log("list elements ==", listElements)
-  if(titleInput.value === "" && listElements.innerHTML === ""){
-    console.log("TITLE ELEMENT ===", titleInput.value)
-    console.log("LIST ELEMENTS.INNERHTML===", listElements.innerHTML)
+  if(titleInput.value === "" || listElements.innerHTML == ""){
     saveButton.disabled = true;
   } else {
-    saveButton.disabled = false
+    saveButton.disabled = false;
   }
 }
