@@ -21,8 +21,8 @@ addButton.addEventListener("click", insertTask);
 titleInput.addEventListener("keyup", checkInputHandler)
 taskInput.addEventListener("keyup", checkInputHandler)
 mainContainer.addEventListener('click', removeCard);
-leftSide.addEventListener("click", handleLeftSide)
-saveButton.addEventListener("click", saveEvent)
+leftSide.addEventListener("click", removeTask)
+saveButton.addEventListener("click", saveToDoList)
 clearButton.addEventListener("click", clearEvent)
 mainContainer.addEventListener("mouseover", eventHandlerHover);
 mainContainer.addEventListener("mouseout", eventHandlerHoverClear);
@@ -30,96 +30,122 @@ mainContainer.addEventListener("mouseout", eventHandlerHoverClear);
 
 function checkInputHandler(e) {
   enablePlusButton();
-  enableClearButton()
+  enableClearButton();
+  enableMakeTaskButton()
 }
 
 
 function saveEvent() {
   createToDoList();
   titleInput.value = ""
-  console.log(tasksArray)
+  console.log(tasksArray);
+  promptUser()
   
   // saveTask();
 }
 
 function clearEvent() {
+  var listElements = document.querySelector(".section__task--list")
   titleInput.value = ""
   taskInput.value = ""
+  listElements.innerHTML = ""
 
 }
 
 function handleLeftSide(e){
     enableMakeTaskButton(e)
-    enableClearButton(e)
-    promptUser()
+    // enableClearButton(e)
+    // promptUser()
 }
 
 
+function getGlobalItem(id){
+  return globalArray.filter(todo =>{ return todo.id == id})[0]
+}
+
+function italicizeFont(e){
+  
+  var checkedListItem = e.target.closest(".article__ul--li").querySelector(".article__ul--li")
+  checkedListItem.classList.toggle("complete")
+}
+
+function completeCheckBox(e) {
+  var card = e.target.closest(".article__card")
+  var taskID = e.target.closest('.article__ul--li').dataset.id;
+  var todoId = e.target.closest('.article__card').dataset.id;
+  var todoClass = getGlobalItem(todoId);
+  var checkBoxElement = e.target.closest('.article__ul--li').querySelector('.checkbox-image');
+  checkBoxElement.classList.toggle('complete');
+  if (checkBoxElement.classList.contains('complete')){
+    todoClass.updateTask(taskID, true);
+  } else {
+    todoClass.updateTask(taskID, false);
+  }
+  todoClass.saveToStorage();
+  if(todoClass.isDisabled() == true){
+    card.classList.add('disabled');
+  } else {
+    card.classList.remove('disabled');
+  }
+  italicizeFont()
+}
 
 
-// function removeSideTask(e) {
-//   console.log("remove task firing")
-//  if(e.target.className === "section__button--delete"){
-//       var index = findIndex(e)
-//       globalArray[index].deleteFromStorage(getToDoId(e))
-//       event.target.closest(".article__card").remove()
-// }}
+function markAsUrgent(e) {
+  var todoId = e.target.closest('.article__card').dataset.id;
+  var todoClass = getGlobalItem(todoId);
+  e.target.closest('.article__card').classList.toggle('urgent')
+  e.target.closest(".urgent-image").classList.toggle("urgent")
+  if (e.target.closest('.article__card').classList.contains("urgent")){
+    todoClass.updateToDo('', true)
+  }else{
+    todoClass.updateToDo('', false)
+  }
+  todoClass.saveToStorage();
+}
 
 function initializePage() {
-  var tempArray = getExistingTasks();
-    if(tempArray.length >0) {
-      loadTasks(tempArray);
-    } promptUser()
+  for (var i = 0; i<localStorage.length; i++){
+    var toDoListId = localStorage.key(i)
+    var ToDoListClassItem = new ToDoList(false, toDoListId);
+    appendToDo(ToDoListClassItem);
+    globalArray.push(ToDoListClassItem);
   }
- 
- function getExistingTasks() {
-  return JSON.parse(localStorage.getItem("toDoListArray"))
- }
-
- function loadTasks(tempArray) {
-  tempArray.forEach(function(element){
-    appendToDo(element);
-    var newToDo = new ToDoList(element)
-    globalArray.push(newToDo)
-  })
- }
+    promptUser()
+  }
 
  function insertTask() {
-  console.log("instert task firing")
-  var task = new Task({
-    id:Date.now(),
+  console.log("instert task firing");
+  var task = {
+    id: 'tsk' + Date.now(),
     isCompleted: false,
     text:taskInput.value,
-  })
+  }
   var taskInsert = taskInput.value;
-  tasks.insertAdjacentHTML("afterEnd", `<div class="ul__li"><ul class="section__ul--task"><img src="icons/delete.svg" class="section__button--delete"><li class="task__body">${taskInsert}</div></ul>`)
-  tasksArray.push(task)
-  console.log(tasksArray)
+  console.log(taskInsert)
+  tasks.insertAdjacentHTML("beforeend", `<div class="ul__li" id="${task.id}"><ul class="section__ul--task"><img src="icons/delete.svg" class="section__button--delete"><li class="task__body">${task.text}</div></ul>`)
   taskInput.value = "";
+  enablePlusButton()
  }
 
- function saveTask(newToDo, e) {
-  if (tasksArray.length === 0 || taskInput.value ==="") {
-    return "No Inputs"
-  } else {
-    var newToDo = new ToDoList({
-      id: Date.time(),
-      title: taskInput.value,
-      tasks: [],
-      urgent: false,
-    });
-    newToDo.saveToStorage(globalArray);
-    appendToDo(newToDo);
-    console.log(tasksArray)
-  }}
-
-
-function populateTasks(array) {
-  var list = `<ul class="article__ul"`;
-  tasksArray.forEach(function(taskItem){
-    list += `<div class="article__ul--all"><li class="article__ul--li" data-id="${taskItem.id}"><img class="article__img--check" src="icons/checkbox.svg">${taskItem.text}</li></div>`
-  })
-  return list
+ function saveToDoList(newToDo, e) {
+  var newToDoList_ID = 'todo' + Date.now();
+  var newToDoList = new ToDoList(true, newToDoList_ID, titleInput.value);
+  var taskElements = document.querySelectorAll('.ul__li');
+  for(var i=0; i<taskElements.length; i++){
+    var taskID = taskElements[i].id;
+    var taskText = taskElements[i].querySelector('.task__body').innerText;
+    newToDoList.updateTask(taskID, false, taskText)
+  }
+  var classList = document.querySelector(".section__task--list")
+  newToDoList.saveToStorage();
+  appendToDo(newToDoList);
+  globalArray.push(newToDoList);
+  titleInput.value = ""
+  taskInput.value = ""
+  classList.innerHTML = ""
+  saveButton.disabled = true
+  promptUser()
 }
 
  function createToDoList() {
@@ -130,31 +156,33 @@ function populateTasks(array) {
     urgent: false,
   })
   appendToDo(newToDo);
-  globalArray.push(newToDo);
+  globalArray = newToDo;
   newToDo.saveToStorage(globalArray);
+  promptUser()
 }
 
-// function urgentImgSource() {
-//   console.log("urgent button shit firing")
-//   var imgSource = "icons/urgent.svg";
-//   if (toDo.urgent === true) {
-//     imgSource = "icons/urgent-active.svg"
-//     debugger;
-//   }
-//   return imgSource
-// }
-
 function appendToDo(newToDo) {
-  console.log("new to do ==", newToDo)
-  mainContainer.insertAdjacentHTML("afterbegin", `<article class="article__card" data-id=${newToDo.id}> 
-    <div class="article__card--task"
+  if(newToDo.urgent){
+    var urgentClass= 'urgent'
+  } else {
+    var urgentClass = ''
+  }
+  if(newToDo.isDisabled() == true){
+    var disClass = 'disabled'
+  } else {
+    var disClass = ''
+  }
+  console.log(urgentClass)
+  mainContainer.insertAdjacentHTML("afterbegin", `<article class="article__card ${urgentClass} ${disClass}" data-id="${newToDo.id}""> 
+    <div class="article__card--task">
         <h2 class="article__card--title">${newToDo.title}</h2>
     </div>
-    <div class="article__ul--item">${populateTasks(globalArray)}
+    <div class="article__ul--item">
+    ${newToDo.getTaskHTML()}
     </div>
         <footer>
             <div class="article__card--urgent-both">
-            <img class="article__img--urgent" src="icons/urgent.svg">
+            <span class="urgent-image ${urgentClass}"  onclick="markAsUrgent(event)""></span>
             <p class="article__card--urgent">Urgent</p>
           </div>
           <div class="article__card--delete-both">
@@ -166,16 +194,26 @@ function appendToDo(newToDo) {
 }
 
 function removeCard(e) {
-    if(e.target.className === "article__img--delete"){
-      var index = findIndex(e)
-      globalArray[index].deleteFromStorage(getToDoId(e))
-      event.target.closest(".article__card").remove()
-    } promptUser()
-    }
+  var cardElement = e.target.closest('.article__card')
+    if(e.target.className === "article__img--delete" && !cardElement.classList.contains('disabled')){
+      var cardId = cardElement.dataset.id;
+      localStorage.removeItem(cardId);
+      cardElement.parentElement.removeChild(cardElement)
+    } 
+}
+
+function removeTask(e){
+  if(e.target.className === "section__button--delete") {
+    var taskElement = e.target.closest(".ul__li");
+    taskElement.parentElement.removeChild(taskElement)
+  }
+}
 
 function checkmarkImgSource(e) {
   if (e.target.classList.contains("article__img--check")) {
     e.target.src = "icons/checkbox-active.svg"
+  // } if (e.target.src = "icons.checkbox-active.svg") {
+  //   e.target.classList.contains("article__ul--li")
   }
 }
 
@@ -195,7 +233,6 @@ function getToDoId(e) {
   return event.target.closest(".article__card").dataset.id
 }
 
-
 function findIndex(event) {
   var id = event.target.closest(".article__card").dataset.id;
   var index = globalArray.findIndex(obj => {
@@ -205,6 +242,7 @@ function findIndex(event) {
   }
 
 function promptUser(){
+  console.log("global array length", globalArray.length)
   console.log("prompt user firing === global array length", globalArray.length)
   var prompt = document.querySelector(".h3__prompt")
   if(globalArray.length > 0) {
@@ -214,20 +252,7 @@ function promptUser(){
   }
 }
 
-
-
-
-
 /*******  BUTTONS *******/
-
-function enableMakeTaskButton(e) {
-  console.log("tasks array length!", tasksArray.length)
-  if (tasksArray.length ===0){
-    saveButton.disabled = true
-  }else{
-    saveButton.disabled = false;
-    
-} }
 
 function enablePlusButton(e) {
   if (titleInput.value !="" && taskInput.value !=""){
@@ -238,67 +263,20 @@ function enablePlusButton(e) {
 }
 
 function enableClearButton(e) {
-  if (titleInput.value > "" || taskInput.value >"") {
-    clearButton.disabled = false
-  }else{
+  if (titleInput.value === "" || taskInput.value ==="") {
     clearButton.disabled = true
+  }else{
+    clearButton.disabled = false
   }
 }
 
-// function clearInputs(e) {
-//   console.log("clear inputs firing")
-//   taskInput.value === "" 
-//   titleInput.value === ""
-//   console.log("title value", titleInput.value)
-// }
-
-
-
-
-// function windowHandler() {
-//   mapLocalStorage()
-// }
-
-// function targetSave(e) {
-//   e.preventDefault();
-//   if(e.target === saveButton) {
-//     createToDoList()
-//   }
-// }
-
-// function mapLocalStorage() {
-//   console.log("map local storage working")
-//   var createNewToDos = oldToDos.map(function(object) {
-//     return createToDoList(object);
-//   })
-//   toDos = createNewToDos;
-// }
-
-
-
-
-
-// function getTitle(e) {
-//   console.log("get title firing")
-//   return titleInput.value;
-// }
-
-// function getTask(e) {
-//   console.log("get task firing")
-//   return taskInput.value;
-// }
-
-
-
-
-
-// function appendTaskItem(object) {
-//   event.preventDefault();
-//   var taskId = object.id;
-//   var taskTitle = object.title;
-//   var taskItem = `
-//     <li class="form__li">
-//       <img src="images/delete.svg" class="form__liImg" data-id="${taskId}">${taskTitle}
-//     </li>`
-//   taskListUl.innerHTML += taskItem;
-//   taskListInput.value = '';
+function enableMakeTaskButton(e){
+  console.log("enable task firing")
+  var listElements = document.querySelector(".section__task--list")
+  console.log("list elements ==", listElements)
+  if(titleInput.value === "" || listElements.innerHTML == ""){
+    saveButton.disabled = true;
+  } else {
+    saveButton.disabled = false;
+  }
+}
