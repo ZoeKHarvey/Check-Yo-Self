@@ -3,11 +3,12 @@
     <head>
       <link rel="stylesheet" type="text/css" href="style.css">
       <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,800&display=swap' rel='stylesheet'>
+      <title>Check Yo' Self</title>
     </head>
     <body>
       <header>
         <h1>
-          Check <span>Yo'</span> Self
+          Check<span>Yo'</span>Self
         </h1>
         <div class=header__div--search>
           <img class="header__icon--search" src="icons/search.svg" alt="search icon to filter to-do lists">
@@ -30,20 +31,24 @@
               <img class="plus__img" src="icons/plus.svg" alt="add button to submit a to-do list" aria-controls="submit-task" aria-label="Add a new single task to the list">
             </button>
           </div>
-          <button class="section__button--make-task section__button" aria-controls="to-do-list-card" aria-label="Must fill out title and task inputs to enable save button" disabled>
-            Make Task List
-          </button>
-          <button class="section__button--clear section__button" aria-label="Clear unsubmitted tasks and the title and task input." disabled>
-            Clear All
-          </button>
+          <div class="section__button--group">
+            <button class="section__button--make-task section__button" aria-controls="to-do-list-card" aria-label="Must fill out title and task inputs to enable save button" disabled>
+              Make Task List
+            </button>
+            <button class="section__button--clear section__button" aria-label="Clear unsubmitted tasks and the title and task input." disabled>
+              Clear All
+            </button>
+          </div>
           <button class="section__button--filter section__button" aria-controls="filtered-cards-by-urgency">
             Filter by Urgency
           </button>
         </section>
         <section class="section__main" aria-label="Current to-do list cards are in this area">
-          <h3 class="h3__prompt" aria-label="No current to-do lists. Complete the title and task inputs.">
-            Accomplish your dreams!<br> But type them in first...
-          </h3>
+          <div class="h3__prompt">
+            <h3 aria-label="No current to-do lists. Complete the title and task inputs.">
+              Accomplish your dreams!<br> But type them in first...
+            </h3>
+          </div>
         </section>
       </main>
     </body>
