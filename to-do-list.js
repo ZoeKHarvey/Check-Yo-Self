@@ -6,19 +6,33 @@ class ToDoList
         this.id = id;
         this.title = title;
         this.urgent = urgent || false;
+        this.disabled = true;
         this.tasks = [];
       } else {
         let obj = JSON.parse(localStorage.getItem(id))
         this.id = obj.id;
         this.title = obj.title;
         this.urgent = obj.urgent || false;
+        this.disabled = obj.disabled || true;
         this.tasks = obj.tasks || [];
       }
     }
+
+  isDisabled(){
+    var completedTasks = this.tasks.filter(function(task){
+      return task.isCompleted == true;
+    })
+    if (completedTasks.length == this.tasks.length){
+      return false;
+    } else {
+      return true;
+    }
+  }
   
   saveToStorage(toDos) {
     localStorage.setItem(this.id, JSON.stringify(this));
   }
+
 
   deleteFromStorage() {
     localStorage.removeItem(this.id)
@@ -33,7 +47,8 @@ class ToDoList
   }
 
   updateTask(taskID, isCompleted, text){
-    var taskFound = false
+    var taskFound = false;
+    console.log(taskID, isCompleted, text)
     for (var i=0; i<this.tasks.length; i++){
       if (this.tasks[i].id == taskID){
         this.tasks[i].isCompleted = isCompleted;
@@ -49,6 +64,7 @@ class ToDoList
       }
       this.tasks.push(newTask)
     }
+
   }
 
   getTaskHTML(){
@@ -56,10 +72,11 @@ class ToDoList
       this.tasks.forEach((taskItem) =>{
         console.log(taskItem)
         var isCompletedClass = '';
+
         if(taskItem.isCompleted == true){
           isCompletedClass = 'complete'
         }
-        htmlStr += `<div class="article__ul--all"><li class="article__ul--li" data-id="${taskItem.id}" onclick="completeCheckBox(event)">
+        htmlStr += `<div class="article__ul--all"><li class="article__ul--li ${isCompletedClass}" data-id="${taskItem.id}" onclick="completeCheckBox(event)">
         <span class="checkbox-image ${isCompletedClass}"></span>
         ${taskItem.text}</li></div>`
     })
