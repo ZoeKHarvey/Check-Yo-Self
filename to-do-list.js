@@ -76,9 +76,11 @@ class ToDoList
         if(taskItem.isCompleted == true){
           isCompletedClass = 'complete'
         }
-        htmlStr += `<div class="article__ul--all"><li class="article__ul--li ${isCompletedClass}" data-id="${taskItem.id}" onclick="completeCheckBox(event)">
-        <span class="checkbox-image ${isCompletedClass}"></span>
-        ${taskItem.text}</li></div>`
+        htmlStr += `<div class="article__ul--all" role="listbox">
+                      <li class="article__ul--li ${isCompletedClass}" data-id="${taskItem.id}" onclick="completeCheckBox(event)">
+                        <span role="checkbox" class="checkbox-image ${isCompletedClass}"></span>
+                        ${taskItem.text}</li>
+                    </div>`
     })
     return htmlStr
   }
